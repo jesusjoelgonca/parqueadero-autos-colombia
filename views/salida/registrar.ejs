@@ -1,0 +1,75 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Salida de Vehículo</h6>
+  <p class="text-muted small mb-0">Ingrese la placa del vehiculo para buscar su registro de entrada y confirmar la salida.</p>
+</section>
+
+<% if (typeof mensaje !== 'undefined' && mensaje) { %>
+<div class="alert alert-success border border-success mb-3" role="alert">[OK] <%= mensaje.replace('[OK] ', '') %></div>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="alert alert-danger border border-danger mb-3" role="alert"><%= error %></div>
+<% } %>
+
+<form action="/salida/registrar/buscar" method="post" class="mb-3">
+  <div class="card mb-3 border border-secondary bg-white shadow-sm card-ac">
+    <div class="card-header py-2">
+      <strong>BUSCAR VEHICULO</strong>
+    </div>
+    <div class="card-body">
+      <label class="form-label text-dark small fw-bold">PLACA DEL VEHICULO</label>
+      <div class="d-flex gap-2">
+        <input type="text" name="placa" class="form-control form-control-sm border-secondary" placeholder="Ej: XYZ-456" value="<%= typeof placa !== 'undefined' ? placa : '' %>">
+        <button type="submit" class="btn btn-ac">BUSCAR</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<% if (typeof vehiculo !== 'undefined' && vehiculo) { %>
+<div class="card mb-3 border border-secondary bg-white shadow-sm card-ac">
+  <div class="card-header py-2">
+    <strong>INFORMACION DEL VEHICULO</strong>
+  </div>
+  <div class="card-body">
+    <div class="row g-2 mb-2">
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">PLACA:</strong> <span class="badge badge-ac text-white"><%= vehiculo.placa %></span></p></div>
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">TIPO DE VEHICULO:</strong> <span class="badge <%= vehiculo.tipo_vehiculo === 'Carro' ? 'badge-carro' : 'badge-moto' %> text-white"><%= vehiculo.tipo_vehiculo %></span></p></div>
+    </div>
+    <div class="row g-2 mb-2">
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">CELDA ASIGNADA:</strong> <span class="text-dark"><%= vehiculo.numero_celda %></span></p></div>
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">HORA DE ENTRADA:</strong> <span class="text-dark"><%= vehiculo.hora_entrada %></span></p></div>
+    </div>
+    <div class="row g-2 mb-2">
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">FECHA DE ENTRADA:</strong> <span class="text-dark"><%= vehiculo.fecha_entrada %></span></p></div>
+      <div class="col-md-6"><p class="mb-2 small"><strong class="text-dark">PROPIETARIO:</strong> <span class="text-dark"><%= vehiculo.nombre_propietario %></span></p></div>
+    </div>
+  </div>
+  <div class="card-body border-top border-secondary pt-3">
+    <div class="row g-2 mb-3">
+      <div class="col-md-6">
+        <div class="border border-secondary rounded p-2 bg-light">
+          <strong class="text-dark small">TIEMPO DE PERMANENCIA</strong>
+          <p class="mb-0 fw-bold text-dark"><%= tiempoPermanencia %></p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border border-secondary rounded p-2 bg-light">
+          <strong class="text-dark small">HORA ACTUAL DE SALIDA</strong>
+          <p class="mb-0 fw-bold text-dark"><%= horaSalida %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body border-top border-secondary pt-2">
+    <form action="/salida/registrar/confirmar" method="post">
+      <input type="hidden" name="id_registro" value="<%= vehiculo.id_registro %>">
+      <button type="submit" class="btn btn-ac">CONFIRMAR SALIDA</button>
+      <a href="/salida/registrar" class="btn btn-outline-dark border-2">CANCELAR</a>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<%- include('../partials/footer') %>

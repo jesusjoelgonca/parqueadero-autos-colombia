@@ -1,0 +1,113 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Historial de Registros</h6>
+  <p class="text-muted small mb-0">Consulte el historial de entradas y salidas de vehiculos. Use los filtros para refinar la busqueda.</p>
+</section>
+
+<div class="card border border-secondary bg-white shadow-sm mb-4 card-ac">
+  <div class="card-header py-2">
+    <strong>FILTROS DE BUSQUEDA</strong>
+  </div>
+  <div class="card-body">
+    <form action="/historial" method="get" class="row g-3 align-items-end">
+      <input type="hidden" name="page" value="1">
+      <div class="col-md-2">
+        <label class="form-label text-dark small fw-bold mb-0">FECHA INICIO</label>
+        <input type="date" name="fechaInicio" class="form-control form-control-sm border-secondary" value="<%= typeof fechaInicio !== 'undefined' ? fechaInicio : '' %>">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-dark small fw-bold mb-0">FECHA FIN</label>
+        <input type="date" name="fechaFin" class="form-control form-control-sm border-secondary" value="<%= typeof fechaFin !== 'undefined' ? fechaFin : '' %>">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-dark small fw-bold mb-0">PLACA</label>
+        <input type="text" name="placa" class="form-control form-control-sm border-secondary" placeholder="Ej: ABC-123" value="<%= typeof placa !== 'undefined' ? placa : '' %>">
+      </div>
+      <div class="col-md-auto">
+        <button type="submit" class="btn btn-ac btn-sm">BUSCAR</button>
+        <a href="/historial" class="btn btn-outline-secondary btn-sm ms-1">LIMPIAR</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm card-ac">
+      <div class="card-body py-2">
+        <h6 class="text-muted small fw-bold mb-0">TOTAL REGISTROS</h6>
+        <p class="h4 mb-0 text-dark"><span class="badge badge-ac text-white fs-6"><%= typeof totalRegistros !== 'undefined' ? totalRegistros : 0 %></span></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm" style="border-left: 4px solid var(--ac-success) !important;">
+      <div class="card-body py-2">
+        <h6 class="text-muted small fw-bold mb-0">PERIODO CONSULTADO</h6>
+        <p class="mb-0"><span class="badge badge-disponible text-white"><%= typeof periodo !== 'undefined' ? periodo : '-' %></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border border-secondary bg-white shadow-sm card-ac">
+  <div class="card-header py-2">
+    <strong>REGISTROS DE ENTRADAS Y SALIDAS</strong>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped mb-0 small">
+        <thead class="table-light">
+          <tr>
+            <th class="border-secondary">#</th>
+            <th class="border-secondary">PLACA</th>
+            <th class="border-secondary">FECHA ENTRADA</th>
+            <th class="border-secondary">HORA ENTRADA</th>
+            <th class="border-secondary">FECHA SALIDA</th>
+            <th class="border-secondary">HORA SALIDA</th>
+            <th class="border-secondary">CELDA</th>
+            <th class="border-secondary">TIEMPO TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (typeof registros !== 'undefined' && registros.length > 0) { const base = (typeof paginaActual !== 'undefined' ? paginaActual : 1) * (typeof pageSize !== 'undefined' ? pageSize : 10) - (typeof pageSize !== 'undefined' ? pageSize : 10); registros.forEach(function(r, i) { %>
+          <tr>
+            <td class="text-dark"><%= base + i + 1 %></td>
+            <td class="text-dark"><%= r.placa %></td>
+            <td class="text-dark"><%= typeof r.fecha_entrada_f !== 'undefined' ? r.fecha_entrada_f : r.fecha_entrada %></td>
+            <td class="text-dark"><%= r.hora_entrada %></td>
+            <td class="text-dark"><%= typeof r.fecha_salida_f !== 'undefined' ? r.fecha_salida_f : (r.fecha_salida || '-') %></td>
+            <td class="text-dark"><%= r.hora_salida || '-' %></td>
+            <td class="text-dark"><%= r.numero_celda %></td>
+            <td class="text-dark"><%= r.tiempo_permanencia || '-' %></td>
+          </tr>
+          <% }); } else { %>
+          <tr><td colspan="8" class="text-center text-muted py-3">No hay registros en el historial para los filtros aplicados.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer bg-white border-top border-secondary d-flex justify-content-between align-items-center small text-muted py-2">
+    <span>Mostrando <%= typeof desde !== 'undefined' ? desde : 0 %> - <%= typeof hasta !== 'undefined' ? hasta : 0 %> de <%= typeof totalRegistros !== 'undefined' ? totalRegistros : 0 %> registros</span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0 gap-1">
+        <% const pag = typeof paginaActual !== 'undefined' ? paginaActual : 1; const totalP = typeof totalPaginas !== 'undefined' ? totalPaginas : 1; const q = []; if (typeof fechaInicio !== 'undefined' && fechaInicio) q.push('fechaInicio=' + encodeURIComponent(fechaInicio)); if (typeof fechaFin !== 'undefined' && fechaFin) q.push('fechaFin=' + encodeURIComponent(fechaFin)); if (typeof placa !== 'undefined' && placa) q.push('placa=' + encodeURIComponent(placa)); const queryStr = q.length ? q.join('&') + '&' : ''; %>
+        <li class="page-item <%= pag <= 1 ? 'disabled' : '' %>">
+          <% if (pag <= 1) { %><span class="page-link">Anterior</span><% } else { %><a class="page-link" href="/historial?<%= queryStr %>page=<%= pag - 1 %>">Anterior</a><% } %>
+        </li>
+        <% for (let p = 1; p <= totalP; p++) { %>
+        <li class="page-item <%= p === pag ? 'active' : '' %>">
+          <% if (p === pag) { %><span class="page-link"><%= p %></span><% } else { %><a class="page-link" href="/historial?<%= queryStr %>page=<%= p %>"><%= p %></a><% } %>
+        </li>
+        <% } %>
+        <li class="page-item <%= pag >= totalP ? 'disabled' : '' %>">
+          <% if (pag >= totalP) { %><span class="page-link">Siguiente</span><% } else { %><a class="page-link" href="/historial?<%= queryStr %>page=<%= pag + 1 %>">Siguiente</a><% } %>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

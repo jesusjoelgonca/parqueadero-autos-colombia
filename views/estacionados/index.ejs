@@ -1,0 +1,118 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Vehículos Actualmente en el Parqueadero</h6>
+  <p class="text-muted small mb-0">Listado de todos los vehiculos que se encuentran dentro del parqueadero en este momento.</p>
+</section>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm card-ac">
+      <div class="card-body">
+        <h6 class="text-muted small fw-bold">VEHICULOS ESTACIONADOS</h6>
+        <p class="h4 mb-0 text-dark"><span class="badge badge-ac text-white fs-6"><%= typeof totalVehiculos !== 'undefined' ? totalVehiculos : 0 %></span></p>
+        <small class="text-muted">de <%= typeof totalCeldas !== 'undefined' ? totalCeldas : 0 %> celdas totales</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm" style="border-left: 4px solid var(--ac-success) !important;">
+      <div class="card-body">
+        <h6 class="text-muted small fw-bold">CELDAS DISPONIBLES</h6>
+        <p class="h4 mb-0 text-dark"><span class="badge badge-disponible text-white fs-6"><%= typeof disponibles !== 'undefined' ? disponibles : 0 %></span></p>
+        <small class="text-muted"><%= typeof porcentaje !== 'undefined' ? porcentaje : 0 %>% de disponibilidad</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm" style="border-left: 4px solid var(--ac-primary) !important;">
+      <div class="card-body">
+        <h6 class="text-muted small fw-bold">CARROS</h6>
+        <p class="h4 mb-0 text-dark"><span class="badge badge-carro text-white fs-6"><%= typeof carros !== 'undefined' ? carros : 0 %></span></p>
+        <small class="text-muted">estacionados</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm" style="border-left: 4px solid var(--ac-info) !important;">
+      <div class="card-body">
+        <h6 class="text-muted small fw-bold">MOTOS</h6>
+        <p class="h4 mb-0 text-dark"><span class="badge badge-moto text-white fs-6"><%= typeof motos !== 'undefined' ? motos : 0 %></span></p>
+        <small class="text-muted">estacionadas</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border border-secondary bg-white shadow-sm card-ac">
+  <div class="card-header py-2">
+    <strong>LISTADO DE VEHICULOS</strong>
+  </div>
+  <div class="card-body border-bottom border-secondary">
+    <form action="/estacionados" method="get" class="row g-2 align-items-end">
+      <input type="hidden" name="page" value="1">
+      <div class="col-auto">
+        <label class="form-label text-dark small fw-bold mb-0">FILTRAR POR TIPO</label>
+        <select name="tipo" class="form-select form-select-sm border-secondary" style="width:auto; min-width: 120px;">
+          <option value="Todos" <%= tipoFiltro === 'Todos' ? 'selected' : '' %>>Todos</option>
+          <option value="Carro" <%= tipoFiltro === 'Carro' ? 'selected' : '' %>>Carro</option>
+          <option value="Moto" <%= tipoFiltro === 'Moto' ? 'selected' : '' %>>Moto</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-ac btn-sm">FILTRAR</button>
+      </div>
+    </form>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="border-secondary">#</th>
+            <th class="border-secondary">PLACA</th>
+            <th class="border-secondary">TIPO</th>
+            <th class="border-secondary">CELDA</th>
+            <th class="border-secondary">HORA DE ENTRADA</th>
+            <th class="border-secondary">PROPIETARIO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (typeof lista !== 'undefined' && lista.length > 0) { const base = (typeof paginaActual !== 'undefined' ? paginaActual : 1) * (typeof pageSize !== 'undefined' ? pageSize : 10) - (typeof pageSize !== 'undefined' ? pageSize : 10); lista.forEach(function(v, i) { %>
+          <tr>
+            <td class="text-dark"><%= base + i + 1 %></td>
+            <td class="text-dark"><span class="badge badge-ac text-white"><%= v.placa %></span></td>
+            <td><span class="badge <%= v.tipo_vehiculo === 'Carro' ? 'badge-carro' : 'badge-moto' %> text-white"><%= v.tipo_vehiculo %></span></td>
+            <td class="text-dark"><%= v.numero_celda %></td>
+            <td class="text-dark"><%= v.hora_entrada %></td>
+            <td class="text-dark"><%= v.nombre_propietario %></td>
+          </tr>
+          <% }); } else { %>
+          <tr><td colspan="6" class="text-center text-muted py-3">No hay vehiculos estacionados.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer bg-white border-top border-secondary d-flex justify-content-between align-items-center small text-muted py-2">
+    <span>Mostrando <%= typeof desde !== 'undefined' ? desde : 0 %> - <%= typeof hasta !== 'undefined' ? hasta : 0 %> de <%= typeof totalVehiculos !== 'undefined' ? totalVehiculos : 0 %> vehiculos</span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0 gap-1">
+        <% const pag = typeof paginaActual !== 'undefined' ? paginaActual : 1; const totalP = typeof totalPaginas !== 'undefined' ? totalPaginas : 1; const q = typeof tipoFiltro !== 'undefined' && tipoFiltro !== 'Todos' ? 'tipo=' + encodeURIComponent(tipoFiltro) + '&' : ''; %>
+        <li class="page-item <%= pag <= 1 ? 'disabled' : '' %>">
+          <% if (pag <= 1) { %><span class="page-link">Anterior</span><% } else { %><a class="page-link" href="/estacionados?<%= q %>page=<%= pag - 1 %>">Anterior</a><% } %>
+        </li>
+        <% for (let p = 1; p <= totalP; p++) { %>
+        <li class="page-item <%= p === pag ? 'active' : '' %>">
+          <% if (p === pag) { %><span class="page-link"><%= p %></span><% } else { %><a class="page-link" href="/estacionados?<%= q %>page=<%= p %>"><%= p %></a><% } %>
+        </li>
+        <% } %>
+        <li class="page-item <%= pag >= totalP ? 'disabled' : '' %>">
+          <% if (pag >= totalP) { %><span class="page-link">Siguiente</span><% } else { %><a class="page-link" href="/estacionados?<%= q %>page=<%= pag + 1 %>">Siguiente</a><% } %>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

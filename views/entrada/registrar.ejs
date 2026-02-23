@@ -1,0 +1,105 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Nueva Entrada</h6>
+  <p class="text-muted small mb-0">Complete los datos del vehiculo y seleccione la celda a asignar.</p>
+</section>
+
+<% if (typeof mensaje !== 'undefined' && mensaje) { %>
+<div class="alert alert-success border border-success mb-3" role="alert">[OK] <%= mensaje.replace('[OK] ', '') %></div>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="alert alert-danger border border-danger mb-3" role="alert"><%= error %></div>
+<% } %>
+
+<form action="/entrada/registrar" method="post" class="mb-4" id="formEntrada">
+  <div class="card mb-3 border border-secondary bg-white shadow-sm card-ac">
+    <div class="card-header py-2">
+      <strong>DATOS DEL VEHICULO</strong>
+    </div>
+    <div class="card-body row g-3">
+      <div class="col-md-4">
+        <label class="form-label text-dark small fw-bold">PLACA</label>
+        <input type="text" name="placa" class="form-control form-control-sm border-secondary" placeholder="Ej: ABC-123" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label text-dark small fw-bold">TIPO DE VEHICULO</label>
+        <select name="tipo_vehiculo" class="form-select form-select-sm border-secondary" required>
+          <option value="Carro">Carro</option>
+          <option value="Moto">Moto</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label text-dark small fw-bold">NOMBRE DEL PROPIETARIO</label>
+        <input type="text" name="nombre_propietario" class="form-control form-control-sm border-secondary" placeholder="Ej: Juan Perez" required>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3 border border-secondary bg-white shadow-sm card-ac">
+    <div class="card-header py-2">
+      <strong>SELECCIONAR CELDA DISPONIBLE</strong>
+    </div>
+    <div class="card-body">
+      <div class="d-flex flex-wrap gap-3 mb-3 small">
+        <span class="badge badge-disponible text-white px-2 py-1">Disponible</span>
+        <span class="badge badge-ocupada text-white px-2 py-1">Ocupada</span>
+        <span class="badge badge-ac text-white px-2 py-1">Seleccionada</span>
+      </div>
+      <div class="row g-2 mb-2">
+        <% if (typeof celdasCarro !== 'undefined') { celdasCarro.forEach(function(c) { %>
+        <div class="col-4 col-md-2">
+          <label class="celda-label d-block rounded p-2 text-center small text-dark border cursor-pointer m-0 <%= c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : 'bg-white border-secondary' %>" data-estado="<%= c.estado %>">
+            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= c.estado === 'Ocupada' ? 'disabled' : '' %>>
+            <span class="celda-numero"><%= c.numero_celda %></span>
+            <span class="celda-estado d-block mt-1"><span class="badge <%= c.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
+          </label>
+        </div>
+        <% }); } %>
+      </div>
+      <div class="row g-2">
+        <% if (typeof celdasMoto !== 'undefined') { celdasMoto.forEach(function(c) { %>
+        <div class="col-4 col-md-2">
+          <label class="celda-label d-block rounded p-2 text-center small text-dark border cursor-pointer m-0 <%= c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : 'bg-white border-secondary' %>" data-estado="<%= c.estado %>">
+            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= c.estado === 'Ocupada' ? 'disabled' : '' %>>
+            <span class="celda-numero"><%= c.numero_celda %></span>
+            <span class="celda-estado d-block mt-1"><span class="badge <%= c.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
+          </label>
+        </div>
+        <% }); } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <button type="submit" class="btn btn-ac">REGISTRAR ENTRADA</button>
+    <a href="/estacionados" class="btn btn-outline-dark border-2">CANCELAR</a>
+  </div>
+</form>
+
+<script>
+(function() {
+  var labels = document.querySelectorAll('.celda-label');
+  labels.forEach(function(lab) {
+    if (lab.querySelector('input[type=radio]:disabled')) return;
+    lab.addEventListener('click', function() {
+      labels.forEach(function(l) {
+        l.classList.remove('border-3', 'border-dark');
+        var est = l.querySelector('.celda-estado');
+        if (est) est.innerHTML = '<span class="badge ' + (l.dataset.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible') + ' text-white" style="font-size:0.7rem;">' + (l.dataset.estado || 'Disponible') + '</span>';
+      });
+      lab.classList.add('border-3', 'border-dark');
+      var e = lab.querySelector('.celda-estado');
+      if (e) e.innerHTML = '<span class="badge badge-ac text-white" style="font-size:0.7rem;">Seleccionada</span>';
+    });
+  });
+  document.querySelectorAll('input[name=id_celda]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      var lab = this.closest('.celda-label');
+      if (lab) lab.click();
+    });
+  });
+})();
+</script>
+
+<%- include('../partials/footer') %>

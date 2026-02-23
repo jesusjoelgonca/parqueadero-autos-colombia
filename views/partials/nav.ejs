@@ -1,0 +1,17 @@
+<nav class="col-md-2 bg-white border-end min-vh-100 py-3 nav-ac" style="border-color: #dee2e6 !important;">
+  <div class="px-3">
+    <h5 class="brand-ac fw-bold">AUTOS COLOMBIA</h5>
+    <p class="small text-muted mb-0">Sistema de Parqueadero</p>
+  </div>
+  <ul class="nav flex-column mt-3">
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'entrada') ? 'active' : '' %>" href="/entrada/registrar">Registrar Entrada</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'salida') ? 'active' : '' %>" href="/salida/registrar">Registrar Salida</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'estacionados') ? 'active' : '' %>" href="/estacionados">Vehículos Estacionados</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'busqueda') ? 'active' : '' %>" href="/busqueda">Buscar Vehículo</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'historial') ? 'active' : '' %>" href="/historial">Historial</a></li>
+  </ul>
+  <hr class="my-3">
+  <form action="/auth/logout" method="post" class="px-3">
+    <button type="submit" class="btn btn-outline-secondary btn-sm">Cerrar sesión</button>
+  </form>
+</nav>

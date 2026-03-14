@@ -1,42 +1,31 @@
 import 'dotenv/config';
 import express from 'express';
-import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import routes from './routes';
+import { attachUserFromJwt } from './middleware/jwtAuth';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
 
-declare module 'express-session' {
-  interface SessionData {
-    user?: { userId: number; nombre: string; rol: string };
-  }
-}
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'clave-secreta-cambiar',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 },
-  })
-);
+app.use(attachUserFromJwt);
 
 app.use((req, res, next) => {
-  res.locals.user = req.session?.user;
+  res.locals.user = req.user;
   next();
 });
 
 app.get('/', (req, res) => {
-  if (req.session?.user) {
-    res.redirect('/estacionados');
+  if (req.user) {
+    res.redirect(req.user.rol === 'Administrador' ? '/usuarios' : '/estacionados');
     return;
   }
   res.redirect('/auth/login');

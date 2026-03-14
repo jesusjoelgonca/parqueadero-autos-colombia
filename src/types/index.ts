@@ -1,6 +1,6 @@
 export type RolUsuario = 'Propietario' | 'Operador' | 'Administrador';
 export type TipoVehiculo = 'Carro' | 'Moto';
-export type EstadoCelda = 'Disponible' | 'Ocupada';
+export type EstadoCelda = 'Disponible' | 'Ocupada' | 'Inactiva';
 
 export interface Usuario {
   id_usuario: number;
@@ -12,6 +12,7 @@ export interface Usuario {
   password_hash: string | null;
   rol: RolUsuario;
   fecha_registro: string | null;
+  activo?: number | null;
 }
 
 export interface Vehiculo {
@@ -47,8 +48,17 @@ export interface SessionUser {
   rol: RolUsuario;
 }
 
+export interface AuthUser {
+  userId: number;
+  nombre: string;
+  rol: string;
+}
+
 declare global {
   namespace Express {
+    interface Request {
+      user?: AuthUser;
+    }
     interface SessionData {
       user?: SessionUser;
     }

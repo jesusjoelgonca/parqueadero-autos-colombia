@@ -1,0 +1,39 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Nueva Celda</h6>
+  <p class="text-muted small mb-0">Registre una nueva celda en el sistema. El número no puede duplicarse y quedará en estado Disponible.</p>
+</section>
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="alert alert-danger border border-danger mb-3" role="alert"><%= error %></div>
+<% } %>
+
+<form action="/celdas/nueva" method="post" class="mb-4">
+  <div class="card border border-secondary bg-white shadow-sm card-ac">
+    <div class="card-header py-2">
+      <strong>DATOS DE LA CELDA</strong>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">NÚMERO DE CELDA <span class="text-danger">*</span></label>
+          <input type="text" name="numero_celda" class="form-control form-control-sm border-secondary" placeholder="Ej. A7, B10, C1" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">TIPO <span class="text-danger">*</span></label>
+          <select name="tipo_celda" class="form-select form-select-sm border-secondary" required>
+            <option value="Carro">Carro</option>
+            <option value="Moto">Moto</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <button type="submit" class="btn btn-ac">GUARDAR</button>
+    <a href="/celdas" class="btn btn-outline-secondary border-2">CANCELAR</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

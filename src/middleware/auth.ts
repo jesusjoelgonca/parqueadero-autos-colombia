@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 export function requireAuth(req: Request, res: Response, next: NextFunction): void {
-  if (req.session?.user) {
+  if (req.user) {
     next();
     return;
   }
@@ -9,7 +9,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
 }
 
 export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  if (req.session?.user?.rol === 'Administrador') {
+  if (req.user?.rol === 'Administrador') {
     next();
     return;
   }

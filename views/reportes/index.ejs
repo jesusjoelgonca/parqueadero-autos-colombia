@@ -1,0 +1,20 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Módulo de Reportes</h6>
+  <p class="text-muted small mb-0">Consulte los reportes disponibles del sistema.</p>
+</section>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card border border-secondary bg-white shadow-sm card-ac h-100">
+      <div class="card-body">
+        <h6 class="card-title fw-bold text-dark">Reporte de Ocupación de Celdas</h6>
+        <p class="card-text small text-muted mb-3">Resumen del estado actual de las celdas: totales, disponibles, ocupadas e inactivas, con desglose por tipo (Carros y Motos).</p>
+        <a href="/celdas/reporte" class="btn btn-ac btn-sm">Ver reporte</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

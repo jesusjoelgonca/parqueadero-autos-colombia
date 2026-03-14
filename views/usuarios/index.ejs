@@ -1,0 +1,135 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Gestión de Usuarios</h6>
+  <p class="text-muted small mb-0">Administra los usuarios del sistema, sus roles y estado de acceso.</p>
+</section>
+
+<% if (typeof mensaje !== 'undefined' && mensaje) { %>
+<div class="alert alert-success border border-success mb-3" role="alert"><%= mensaje %></div>
+<% } %>
+<% if (typeof buscar !== 'undefined' && buscar && typeof totalUsuarios !== 'undefined' && totalUsuarios === 0) { %>
+<div class="alert alert-warning border border-warning mb-3" role="alert">No se encontró ningún usuario con ese criterio. Pruebe con otro nombre o cédula.</div>
+<% } %>
+
+<div class="card border border-secondary bg-white shadow-sm mb-3 card-ac">
+  <div class="card-body">
+    <form action="/usuarios" method="get" class="row g-2 align-items-end flex-wrap">
+      <input type="hidden" name="page" value="1">
+      <div class="col-auto flex-grow-1" style="min-width: 200px;">
+        <label class="form-label text-dark small fw-bold mb-0">BUSCAR USUARIO</label>
+        <input type="text" name="buscar" class="form-control form-control-sm border-secondary" placeholder="Buscar por nombre o cédula..." value="<%= typeof buscar !== 'undefined' ? buscar : '' %>">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-ac btn-sm">BUSCAR</button>
+      </div>
+      <div class="col-auto ms-md-auto">
+        <a href="/usuarios/registrar" class="btn btn-ac btn-sm">+ NUEVO USUARIO</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border border-secondary bg-white shadow-sm card-ac">
+  <div class="card-header py-2">
+    <strong>LISTADO DE USUARIOS</strong>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="border-secondary">#</th>
+            <th class="border-secondary">NOMBRE</th>
+            <th class="border-secondary">CÉDULA</th>
+            <th class="border-secondary">ROL</th>
+            <th class="border-secondary">ESTADO</th>
+            <th class="border-secondary">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (typeof lista !== 'undefined' && lista.length > 0) { const base = (typeof paginaActual !== 'undefined' ? paginaActual : 1) * (typeof pageSize !== 'undefined' ? pageSize : 10) - (typeof pageSize !== 'undefined' ? pageSize : 10); const qBuscar = (typeof buscar !== 'undefined' && buscar) ? 'buscar=' + encodeURIComponent(buscar) + '&' : ''; lista.forEach(function(u, i) { %>
+          <tr>
+            <td class="text-dark"><%= base + i + 1 %></td>
+            <td class="text-dark"><%= u.nombre %></td>
+            <td class="text-dark"><%= u.cedula || '-' %></td>
+            <td><span class="badge <%= u.rol === 'Administrador' ? 'badge-ac' : 'badge-moto' %> text-white"><%= u.rol %></span></td>
+            <td><span class="badge <%= u.estado === 'Activo' ? 'badge-disponible' : 'badge-ocupada' %> text-white"><%= u.estado %></span></td>
+            <td>
+              <a href="/usuarios/editar/<%= u.id_usuario %>" class="btn btn-outline-dark btn-sm border-2">Editar</a>
+              <% if (u.estado === 'Activo') { %>
+              <form action="/usuarios/<%= u.id_usuario %>/desactivar?<%= qBuscar %>page=<%= typeof paginaActual !== 'undefined' ? paginaActual : 1 %>" method="post" class="d-inline ms-1 form-desactivar">
+                <button type="button" class="btn btn-ac btn-sm" data-bs-toggle="modal" data-bs-target="#modalDesactivar">Desactivar</button>
+              </form>
+              <% } else { %>
+              <form action="/usuarios/<%= u.id_usuario %>/activar?<%= qBuscar %>page=<%= typeof paginaActual !== 'undefined' ? paginaActual : 1 %>" method="post" class="d-inline ms-1">
+                <button type="submit" class="btn btn-outline-dark btn-sm border-2">Activar</button>
+              </form>
+              <% } %>
+            </td>
+          </tr>
+          <% }); } else { %>
+          <tr><td colspan="6" class="text-center text-muted py-3"><%= (typeof buscar !== 'undefined' && buscar) ? 'No se encontró ningún resultado para su búsqueda.' : 'No hay usuarios registrados.' %></td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer bg-white border-top border-secondary d-flex justify-content-between align-items-center small text-muted py-2">
+    <span>Mostrando <%= typeof desde !== 'undefined' ? desde : 0 %> - <%= typeof hasta !== 'undefined' ? hasta : 0 %> de <%= typeof totalUsuarios !== 'undefined' ? totalUsuarios : 0 %> usuarios</span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0 gap-1">
+        <% const pag = typeof paginaActual !== 'undefined' ? paginaActual : 1; const totalP = typeof totalPaginas !== 'undefined' ? totalPaginas : 1; const q = (typeof buscar !== 'undefined' && buscar) ? 'buscar=' + encodeURIComponent(buscar) + '&' : ''; %>
+        <li class="page-item <%= pag <= 1 ? 'disabled' : '' %>">
+          <% if (pag <= 1) { %><span class="page-link">Anterior</span><% } else { %><a class="page-link" href="/usuarios?<%= q %>page=<%= pag - 1 %>">Anterior</a><% } %>
+        </li>
+        <% for (let p = 1; p <= totalP; p++) { %>
+        <li class="page-item <%= p === pag ? 'active' : '' %>">
+          <% if (p === pag) { %><span class="page-link"><%= p %></span><% } else { %><a class="page-link" href="/usuarios?<%= q %>page=<%= p %>"><%= p %></a><% } %>
+        </li>
+        <% } %>
+        <li class="page-item <%= pag >= totalP ? 'disabled' : '' %>">
+          <% if (pag >= totalP) { %><span class="page-link">Siguiente</span><% } else { %><a class="page-link" href="/usuarios?<%= q %>page=<%= pag + 1 %>">Siguiente</a><% } %>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- Modal confirmar desactivar -->
+<div class="modal fade" id="modalDesactivar" tabindex="-1" aria-labelledby="modalDesactivarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title text-dark" id="modalDesactivarLabel">Confirmar desactivación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <p class="mb-0">¿Está seguro de desactivar a este usuario? No podrá iniciar sesión hasta que sea activado de nuevo. El historial se mantiene.</p>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-ac" id="btnConfirmarDesactivar">Desactivar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  var modalEl = document.getElementById('modalDesactivar');
+  if (!modalEl) return;
+  var formToSubmit = null;
+  modalEl.addEventListener('show.bs.modal', function(ev) {
+    var btn = ev.relatedTarget;
+    formToSubmit = btn ? btn.closest('form.form-desactivar') : null;
+  });
+  document.getElementById('btnConfirmarDesactivar').addEventListener('click', function() {
+    if (formToSubmit) formToSubmit.submit();
+    var modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) modal.hide();
+  });
+});
+</script>
+
+<%- include('../partials/footer') %>

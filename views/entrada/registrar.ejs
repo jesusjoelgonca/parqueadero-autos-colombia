@@ -43,27 +43,36 @@
     <div class="card-body">
       <div class="d-flex flex-wrap gap-3 mb-3 small">
         <span class="badge badge-disponible text-white px-2 py-1">Disponible</span>
-        <span class="badge badge-ocupada text-white px-2 py-1">Ocupada</span>
+        <span class="badge badge-ocupada-celda text-white px-2 py-1">Ocupada</span>
+        <span class="badge badge-inactiva text-white px-2 py-1">Inactiva</span>
         <span class="badge badge-ac text-white px-2 py-1">Seleccionada</span>
       </div>
       <div class="row g-2 mb-2">
-        <% if (typeof celdasCarro !== 'undefined') { celdasCarro.forEach(function(c) { %>
+        <% if (typeof celdasCarro !== 'undefined') { celdasCarro.forEach(function(c) {
+          var noDisponible = c.estado !== 'Disponible';
+          var estilo = c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : (c.estado === 'Inactiva' ? 'bg-secondary bg-opacity-25 text-muted border-secondary' : 'bg-white border-secondary');
+          var badge = c.estado === 'Ocupada' ? 'badge-ocupada-celda' : (c.estado === 'Inactiva' ? 'badge-inactiva' : 'badge-disponible');
+        %>
         <div class="col-4 col-md-2">
-          <label class="celda-label d-block rounded p-2 text-center small text-dark border cursor-pointer m-0 <%= c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : 'bg-white border-secondary' %>" data-estado="<%= c.estado %>">
-            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= c.estado === 'Ocupada' ? 'disabled' : '' %>>
+          <label class="celda-label d-block rounded p-2 text-center small text-dark border m-0 <%= noDisponible ? '' : 'cursor-pointer' %> <%= estilo %>" data-estado="<%= c.estado %>">
+            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= noDisponible ? 'disabled' : '' %>>
             <span class="celda-numero"><%= c.numero_celda %></span>
-            <span class="celda-estado d-block mt-1"><span class="badge <%= c.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
+            <span class="celda-estado d-block mt-1"><span class="badge <%= badge %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
           </label>
         </div>
         <% }); } %>
       </div>
       <div class="row g-2">
-        <% if (typeof celdasMoto !== 'undefined') { celdasMoto.forEach(function(c) { %>
+        <% if (typeof celdasMoto !== 'undefined') { celdasMoto.forEach(function(c) {
+          var noDisponible = c.estado !== 'Disponible';
+          var estilo = c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : (c.estado === 'Inactiva' ? 'bg-secondary bg-opacity-25 text-muted border-secondary' : 'bg-white border-secondary');
+          var badge = c.estado === 'Ocupada' ? 'badge-ocupada-celda' : (c.estado === 'Inactiva' ? 'badge-inactiva' : 'badge-disponible');
+        %>
         <div class="col-4 col-md-2">
-          <label class="celda-label d-block rounded p-2 text-center small text-dark border cursor-pointer m-0 <%= c.estado === 'Ocupada' ? 'bg-secondary text-white border-secondary' : 'bg-white border-secondary' %>" data-estado="<%= c.estado %>">
-            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= c.estado === 'Ocupada' ? 'disabled' : '' %>>
+          <label class="celda-label d-block rounded p-2 text-center small text-dark border m-0 <%= noDisponible ? '' : 'cursor-pointer' %> <%= estilo %>" data-estado="<%= c.estado %>">
+            <input type="radio" name="id_celda" value="<%= c.id_celda %>" class="d-none" <%= noDisponible ? 'disabled' : '' %>>
             <span class="celda-numero"><%= c.numero_celda %></span>
-            <span class="celda-estado d-block mt-1"><span class="badge <%= c.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
+            <span class="celda-estado d-block mt-1"><span class="badge <%= badge %> text-white" style="font-size:0.7rem;"><%= c.estado %></span></span>
           </label>
         </div>
         <% }); } %>
@@ -86,7 +95,8 @@
       labels.forEach(function(l) {
         l.classList.remove('border-3', 'border-dark');
         var est = l.querySelector('.celda-estado');
-        if (est) est.innerHTML = '<span class="badge ' + (l.dataset.estado === 'Ocupada' ? 'badge-ocupada' : 'badge-disponible') + ' text-white" style="font-size:0.7rem;">' + (l.dataset.estado || 'Disponible') + '</span>';
+        var badge = l.dataset.estado === 'Ocupada' ? 'badge-ocupada-celda' : (l.dataset.estado === 'Inactiva' ? 'badge-inactiva' : 'badge-disponible');
+        if (est) est.innerHTML = '<span class="badge ' + badge + ' text-white" style="font-size:0.7rem;">' + (l.dataset.estado || 'Disponible') + '</span>';
       });
       lab.classList.add('border-3', 'border-dark');
       var e = lab.querySelector('.celda-estado');

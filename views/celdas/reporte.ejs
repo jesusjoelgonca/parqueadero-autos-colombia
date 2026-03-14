@@ -1,0 +1,172 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<section class="mb-4">
+  <h6 class="fw-bold text-dark">Reporte de Ocupación de Celdas</h6>
+  <p class="text-muted small mb-0">Resumen del estado actual de todas las celdas del parqueadero.</p>
+</section>
+
+<div class="row g-2 mb-3">
+  <div class="col-6 col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm">
+      <div class="card-body py-3 text-center">
+        <span class="d-block fw-bold fs-4 text-dark"><%= typeof total !== 'undefined' ? total : 0 %></span>
+        <span class="small text-muted">TOTAL CELDAS</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border border-success bg-white shadow-sm">
+      <div class="card-body py-3 text-center">
+        <span class="d-block fw-bold fs-4 text-success"><%= typeof disponibles !== 'undefined' ? disponibles : 0 %></span>
+        <span class="small text-muted">DISPONIBLES</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border border-danger bg-white shadow-sm">
+      <div class="card-body py-3 text-center">
+        <span class="d-block fw-bold fs-4 text-danger"><%= typeof ocupadas !== 'undefined' ? ocupadas : 0 %></span>
+        <span class="small text-muted">OCUPADAS</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border border-secondary bg-white shadow-sm">
+      <div class="card-body py-3 text-center">
+        <span class="d-block fw-bold fs-4 text-secondary"><%= typeof inactivas !== 'undefined' ? inactivas : 0 %></span>
+        <span class="small text-muted">INACTIVAS</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card border border-secondary bg-white shadow-sm">
+      <div class="card-body py-2">
+        <span class="small text-muted fw-bold">PERIODO CONSULTADO</span>
+        <p class="mb-0 small text-dark"><%= typeof ultimaActualizacion !== 'undefined' ? ultimaActualizacion.split(' — ')[0] : '' %> (estado actual)</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border border-secondary bg-white shadow-sm">
+      <div class="card-body py-2">
+        <span class="small text-muted fw-bold">DISPONIBILIDAD GENERAL</span>
+        <p class="mb-1 small text-dark"><%= typeof disponibilidadGeneral !== 'undefined' ? disponibilidadGeneral : 0 %>% (<%= typeof disponibles !== 'undefined' ? disponibles : 0 %> de <%= typeof total !== 'undefined' ? total : 0 %> celdas)</p>
+        <div class="progress" style="height: 8px;">
+          <div class="progress-bar bg-success" role="progressbar" data-width="<%= typeof disponibilidadGeneral !== 'undefined' ? disponibilidadGeneral : 0 %>" aria-valuenow="<%= typeof disponibilidadGeneral !== 'undefined' ? disponibilidadGeneral : 0 %>" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card border border-secondary bg-white shadow-sm card-ac">
+      <div class="card-header py-2">
+        <strong>DESGLOSE – CARROS (<%= typeof carroTotal !== 'undefined' ? carroTotal : 0 %> celdas)</strong>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Disponibles</span>
+            <span><%= typeof carroDisponibles !== 'undefined' ? carroDisponibles : 0 %> celdas</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-success" data-width="<%= typeof carroPctD !== 'undefined' ? carroPctD : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Ocupadas</span>
+            <span><%= typeof carroOcupadas !== 'undefined' ? carroOcupadas : 0 %> celdas</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-danger" data-width="<%= typeof carroPctO !== 'undefined' ? carroPctO : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Inactivas</span>
+            <span><%= typeof carroInactivas !== 'undefined' ? carroInactivas : 0 %> celda(s)</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-secondary" data-width="<%= typeof carroPctI !== 'undefined' ? carroPctI : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mt-2 pt-2 border-top">
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="fw-bold">Disponibilidad total</span>
+            <span><%= typeof carroDisponibilidad !== 'undefined' ? carroDisponibilidad : 0 %>%</span>
+          </div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-success" data-width="<%= typeof carroDisponibilidad !== 'undefined' ? carroDisponibilidad : 0 %>"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border border-secondary bg-white shadow-sm card-ac">
+      <div class="card-header py-2">
+        <strong>DESGLOSE – MOTOS (<%= typeof motoTotal !== 'undefined' ? motoTotal : 0 %> celdas)</strong>
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Disponibles</span>
+            <span><%= typeof motoDisponibles !== 'undefined' ? motoDisponibles : 0 %> celdas</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-success" data-width="<%= typeof motoPctD !== 'undefined' ? motoPctD : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Ocupadas</span>
+            <span><%= typeof motoOcupadas !== 'undefined' ? motoOcupadas : 0 %> celdas</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-danger" data-width="<%= typeof motoPctO !== 'undefined' ? motoPctO : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small mb-1">
+            <span>Inactivas</span>
+            <span><%= typeof motoInactivas !== 'undefined' ? motoInactivas : 0 %> celdas</span>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-secondary" data-width="<%= typeof motoPctI !== 'undefined' ? motoPctI : 0 %>"></div>
+          </div>
+        </div>
+        <div class="mt-2 pt-2 border-top">
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="fw-bold">Disponibilidad total</span>
+            <span><%= typeof motoDisponibilidad !== 'undefined' ? motoDisponibilidad : 0 %>%</span>
+          </div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-success" data-width="<%= typeof motoDisponibilidad !== 'undefined' ? motoDisponibilidad : 0 %>"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="small text-muted mb-0">Datos actualizados en tiempo real. Última actualización: <%= typeof ultimaActualizacion !== 'undefined' ? ultimaActualizacion : '' %></p>
+
+<div class="mt-3 d-flex gap-2">
+  <a href="/reportes" class="btn btn-outline-secondary btn-sm">Volver a Reportes</a>
+  <a href="/celdas" class="btn btn-outline-secondary btn-sm">Ver cuadrícula de celdas</a>
+</div>
+
+<script>
+document.querySelectorAll('.progress-bar[data-width]').forEach(function(el) {
+  var w = el.getAttribute('data-width');
+  if (w !== null && w !== '') el.style.width = w + '%';
+});
+</script>
+
+<%- include('../partials/footer') %>

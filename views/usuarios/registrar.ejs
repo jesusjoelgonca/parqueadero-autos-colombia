@@ -1,0 +1,70 @@
+<%- include('../partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, active: typeof active !== 'undefined' ? active : '' }) %>
+
+<% const esEditar = typeof editar !== 'undefined' && editar && typeof usuario !== 'undefined' && usuario; %>
+<section class="mb-4">
+  <h6 class="fw-bold text-dark"><%= esEditar ? 'Editar Usuario' : 'Registrar Nuevo Usuario' %></h6>
+  <p class="text-muted small mb-0"><%= esEditar ? 'Modifique los datos que desee. La cédula no se puede cambiar.' : 'Complete todos los campos para registrar un nuevo usuario en el sistema.' %></p>
+</section>
+
+<% if (typeof mensaje !== 'undefined' && mensaje) { %>
+<div class="alert alert-success border border-success mb-3" role="alert"><%= mensaje %></div>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="alert alert-danger border border-danger mb-3" role="alert"><%= error %></div>
+<% } %>
+
+<form action="<%= esEditar ? '/usuarios/editar/' + usuario.id_usuario : '/usuarios/registrar' %>" method="post" class="mb-4">
+  <div class="card border border-secondary bg-white shadow-sm card-ac">
+    <div class="card-header py-2">
+      <strong>DATOS DEL USUARIO</strong>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">NOMBRE COMPLETO <span class="text-danger">*</span></label>
+          <input type="text" name="nombre_completo" class="form-control form-control-sm border-secondary" placeholder="Ej. Carlos Andrés Mendoza" value="<%= esEditar ? (usuario.nombre || '') : '' %>" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">CÉDULA <span class="text-danger">*</span></label>
+          <% if (esEditar) { %>
+          <input type="text" class="form-control form-control-sm border-secondary bg-light" value="<%= usuario.cedula || '' %>" readonly>
+          <input type="hidden" name="cedula" value="<%= usuario.cedula || '' %>">
+          <% } else { %>
+          <input type="text" name="cedula" class="form-control form-control-sm border-secondary" placeholder="Ej. 1020304050" required>
+          <% } %>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">TELÉFONO</label>
+          <input type="text" name="telefono" class="form-control form-control-sm border-secondary" placeholder="Ej. 3001234567" value="<%= esEditar ? (usuario.telefono || '') : '' %>">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">CORREO ELECTRÓNICO <span class="text-danger">*</span></label>
+          <input type="email" name="correo" class="form-control form-control-sm border-secondary" placeholder="Ej. carlos@autoscolombia.com" value="<%= esEditar ? (usuario.email || '') : '' %>" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">CONTRASEÑA <%= esEditar ? '' : '<span class="text-danger">*</span>' %></label>
+          <input type="password" name="password" class="form-control form-control-sm border-secondary" minlength="8" placeholder="<%= esEditar ? 'Dejar en blanco para no cambiar' : '' %>" <%= esEditar ? '' : 'required' %>>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">CONFIRMAR CONTRASEÑA <%= esEditar ? '' : '<span class="text-danger">*</span>' %></label>
+          <input type="password" name="confirmar_password" class="form-control form-control-sm border-secondary" minlength="8" placeholder="<%= esEditar ? 'Dejar en blanco para no cambiar' : '' %>" <%= esEditar ? '' : 'required' %>>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-dark small fw-bold">ROL <span class="text-danger">*</span></label>
+          <select name="rol" class="form-select form-select-sm border-secondary" required>
+            <option value="Operador" <%= (esEditar && usuario.rol === 'Operador') ? 'selected' : '' %>>Operador</option>
+            <option value="Administrador" <%= (esEditar && usuario.rol === 'Administrador') ? 'selected' : '' %>>Administrador</option>
+          </select>
+        </div>
+      </div>
+      <p class="small text-muted mt-3 mb-0">* Los campos marcados son obligatorios.</p>
+      <p class="small text-muted mb-0">La contraseña debe tener mínimo 8 caracteres. La cédula no puede modificarse después del registro.</p>
+    </div>
+  </div>
+  <div class="d-flex gap-2 mt-3 justify-content-end">
+    <button type="submit" class="btn btn-ac">GUARDAR</button>
+    <a href="/usuarios" class="btn btn-outline-secondary border-2">CANCELAR</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

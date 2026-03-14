@@ -9,6 +9,11 @@
     <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'estacionados') ? 'active' : '' %>" href="/estacionados">Vehículos Estacionados</a></li>
     <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'busqueda') ? 'active' : '' %>" href="/busqueda">Buscar Vehículo</a></li>
     <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'historial') ? 'active' : '' %>" href="/historial">Historial</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'reportes') ? 'active' : '' %>" href="/reportes">Reportes</a></li>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'celdas') ? 'active' : '' %>" href="/celdas">Gestionar Celdas</a></li>
+    <% if (typeof user !== 'undefined' && user && user.rol === 'Administrador') { %>
+    <li class="nav-item"><a class="nav-link text-dark px-3 <%= (typeof active !== 'undefined' && active === 'usuarios') ? 'active' : '' %>" href="/usuarios">Gestión de Usuarios</a></li>
+    <% } %>
   </ul>
   <hr class="my-3">
   <form action="/auth/logout" method="post" class="px-3">
